@@ -39,6 +39,7 @@ function showMusicButton(show) {
 	}
 
 	musicBtn.classList.toggle("hidden", !show);
+	musicBtn.textContent = show ? "Play Music" : "Music On";
 }
 
 function removeUnlockListeners() {
