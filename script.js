@@ -14,7 +14,6 @@ const noBtn = document.getElementById("noBtn");
 const buttonsZone = document.getElementById("buttonsZone");
 const heartBurst = document.getElementById("heartBurst");
 const bgSong = document.getElementById("bgSong");
-const musicBtn = document.getElementById("musicBtn");
 const SONG_FILE = "Sadi Sun - HARSH NUSSI (mp3cut.net).mp3";
 
 let activeIndex = 0;
@@ -31,15 +30,6 @@ function setSongSource() {
 		bgSong.setAttribute("src", resolvedSong);
 		bgSong.load();
 	}
-}
-
-function showMusicButton(show) {
-	if (!musicBtn) {
-		return;
-	}
-
-	musicBtn.classList.toggle("hidden", !show);
-	musicBtn.textContent = show ? "Play Music" : "Music On";
 }
 
 function removeUnlockListeners() {
@@ -97,15 +87,10 @@ function tryAutoplaySong() {
 		setTimeout(() => {
 			bgSong.muted = false;
 			bgSong.play().then(() => {
-				showMusicButton(false);
 				removeUnlockListeners();
-			}).catch(() => {
-				showMusicButton(true);
 			});
 		}, 180);
-	}).catch(() => {
-		showMusicButton(true);
-	});
+	}).catch(() => {});
 }
 
 function unlockSongOnInteraction() {
@@ -117,15 +102,8 @@ function unlockSongOnInteraction() {
 
 	bgSong.muted = false;
 	bgSong.play().then(() => {
-		showMusicButton(false);
 		removeUnlockListeners();
-	}).catch(() => {
-		showMusicButton(true);
-	});
-}
-
-if (musicBtn) {
-	musicBtn.addEventListener("click", unlockSongOnInteraction);
+	}).catch(() => {});
 }
 
 function openDatePopup() {
@@ -208,6 +186,14 @@ dateModal.addEventListener(
 buildSlides();
 startSlideShow();
 tryAutoplaySong();
+
+window.addEventListener("load", tryAutoplaySong);
+window.addEventListener("pageshow", tryAutoplaySong);
+document.addEventListener("visibilitychange", () => {
+	if (document.visibilityState === "visible") {
+		tryAutoplaySong();
+	}
+});
 
 window.addEventListener("click", unlockSongOnInteraction);
 window.addEventListener("touchstart", unlockSongOnInteraction, { passive: true });
