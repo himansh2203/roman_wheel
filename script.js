@@ -90,15 +90,21 @@ function tryAutoplaySong() {
 	}
 
 	setSongSource();
+	bgSong.muted = true;
 
 	bgSong.play().then(() => {
-		showMusicButton(false);
-		removeUnlockListeners();
+		// Try to switch from muted autoplay to audible playback.
+		setTimeout(() => {
+			bgSong.muted = false;
+			bgSong.play().then(() => {
+				showMusicButton(false);
+				removeUnlockListeners();
+			}).catch(() => {
+				showMusicButton(true);
+			});
+		}, 180);
 	}).catch(() => {
-		// Autoplay is blocked by policy until user interaction.
 		showMusicButton(true);
-		bgSong.muted = true;
-		bgSong.play().catch(() => {});
 	});
 }
 
