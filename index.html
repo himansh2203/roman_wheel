@@ -256,6 +256,25 @@
 			font-size: 0.88rem;
 			opacity: 0.72;
 		}
+
+		.music-btn {
+			position: fixed;
+			right: 1rem;
+			bottom: 1rem;
+			z-index: 40;
+			border: 0;
+			border-radius: 999px;
+			padding: 0.7rem 1rem;
+			background: linear-gradient(145deg, #ff6f91, #ff4f81);
+			color: #fff;
+			font-weight: 700;
+			box-shadow: 0 8px 18px rgba(214, 51, 108, 0.3);
+			cursor: pointer;
+		}
+
+		.music-btn.hidden {
+			display: none;
+		}
 	</style>
 </head>
 <body>
@@ -291,7 +310,8 @@
 		</div>
 	</section>
 
-	<audio id="bgSong" src="Sadi Sun - HARSH NUSSI (mp3cut.net).mp3" loop autoplay preload="auto"></audio>
+	<audio id="bgSong" src="Sadi Sun - HARSH NUSSI (mp3cut.net).mp3" loop autoplay preload="auto" playsinline></audio>
+	<button id="musicBtn" class="music-btn hidden" type="button">Tap for Music</button>
 
 	<script src="script.js"></script>
 </body>

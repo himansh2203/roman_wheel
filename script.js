@@ -14,11 +14,37 @@ const noBtn = document.getElementById("noBtn");
 const buttonsZone = document.getElementById("buttonsZone");
 const heartBurst = document.getElementById("heartBurst");
 const bgSong = document.getElementById("bgSong");
+const musicBtn = document.getElementById("musicBtn");
 const SONG_FILE = "Sadi Sun - HARSH NUSSI (mp3cut.net).mp3";
 
 let activeIndex = 0;
 let slideTimer;
 let popupShown = false;
+
+function setSongSource() {
+	if (!bgSong) {
+		return;
+	}
+
+	const resolvedSong = new URL(encodeURI(SONG_FILE), window.location.href).href;
+	if (bgSong.getAttribute("src") !== resolvedSong) {
+		bgSong.setAttribute("src", resolvedSong);
+		bgSong.load();
+	}
+}
+
+function showMusicButton(show) {
+	if (!musicBtn) {
+		return;
+	}
+
+	musicBtn.classList.toggle("hidden", !show);
+}
+
+function removeUnlockListeners() {
+	window.removeEventListener("click", unlockSongOnInteraction);
+	window.removeEventListener("touchstart", unlockSongOnInteraction);
+}
 
 function buildSlides() {
 	const fragment = document.createDocumentFragment();
@@ -62,14 +88,14 @@ function tryAutoplaySong() {
 		return;
 	}
 
-	// Always pin the exact intended file to avoid stale/cached audio source.
-	const resolvedSong = encodeURI(SONG_FILE);
-	if (bgSong.getAttribute("src") !== resolvedSong) {
-		bgSong.setAttribute("src", resolvedSong);
-		bgSong.load();
-	}
+	setSongSource();
 
-	bgSong.play().catch(() => {
+	bgSong.play().then(() => {
+		showMusicButton(false);
+		removeUnlockListeners();
+	}).catch(() => {
+		// Autoplay is blocked by policy until user interaction.
+		showMusicButton(true);
 		bgSong.muted = true;
 		bgSong.play().catch(() => {});
 	});
@@ -80,16 +106,19 @@ function unlockSongOnInteraction() {
 		return;
 	}
 
-	const resolvedSong = encodeURI(SONG_FILE);
-	if (bgSong.getAttribute("src") !== resolvedSong) {
-		bgSong.setAttribute("src", resolvedSong);
-		bgSong.load();
-	}
+	setSongSource();
 
 	bgSong.muted = false;
-	bgSong.play().catch(() => {});
-	window.removeEventListener("click", unlockSongOnInteraction);
-	window.removeEventListener("touchstart", unlockSongOnInteraction);
+	bgSong.play().then(() => {
+		showMusicButton(false);
+		removeUnlockListeners();
+	}).catch(() => {
+		showMusicButton(true);
+	});
+}
+
+if (musicBtn) {
+	musicBtn.addEventListener("click", unlockSongOnInteraction);
 }
 
 function openDatePopup() {
